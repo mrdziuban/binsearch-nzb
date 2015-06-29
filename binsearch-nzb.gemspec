@@ -16,5 +16,4 @@ Gem::Specification.new do |s|
   s.required_ruby_version = '>= 1.9'
 
   s.add_dependency 'nokogiri', '>= 1.6.6'
-  s.add_dependency 'json'
 end
