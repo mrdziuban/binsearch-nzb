@@ -14,6 +14,13 @@ class BinsearchNzb
     postdate: ''
   }
 
+  UNITS_TO_MULTIPLIER = {
+    b: 0,
+    kb: 1024,
+    mb: 1024*1024,
+    gb: 1024*1024*1024
+  }
+
   # Example usage: BinsearchNzb.search('foo bar', max: 250)
   #
   # Available options:
@@ -54,8 +61,9 @@ class BinsearchNzb
       collection_link = detail_cells[2].css('.d > a').find {|a| a.text == 'collection'}
       result[:collection_url] = "https://binsearch.info#{collection_link['href']}" if collection_link
 
-      /size: (?<size>[^,]+)/i =~ detail_cells[2].css('.d').text
-      result[:size] = size if size
+      /size: (?<size>[^\s]+) (?<units>[^,]+)/i =~ detail_cells[2].css('.d').text.gsub(/[[:space:]]/, ' ')
+      result[:size] = (size.to_f * UNITS_TO_MULTIPLIER[units.downcase.to_sym]).round if size
+      result[:size_text] = size if size
 
       poster = detail_cells[3].css('a')[0]
       result[:poster] = {
